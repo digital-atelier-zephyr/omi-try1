@@ -39,7 +39,7 @@ services:
     depends_on:
       - api
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost"]
+      test: ["CMD", "wget", "-q", "--spider", "--header=Host: omi.local", "http://localhost"]
       interval: 30s
       timeout: 5s
       retries: 3
