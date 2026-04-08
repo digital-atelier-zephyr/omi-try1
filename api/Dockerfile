@@ -21,5 +21,12 @@ COPY . .
 # Ставим зависимости
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Права на storage и cache
+RUN chown -R www-data:www-data storage bootstrap/cache
+
 EXPOSE 9000
-CMD ["php-fpm"]
+ENTRYPOINT ["docker-entrypoint.sh"]
