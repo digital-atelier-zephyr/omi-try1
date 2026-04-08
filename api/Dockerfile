@@ -15,11 +15,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Если есть composer.json — ставим зависимости
-COPY composer.json composer.lock* ./
-RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader; fi
-
+# Копируем всё
 COPY . .
+
+# Ставим зависимости
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 EXPOSE 9000
 CMD ["php-fpm"]
