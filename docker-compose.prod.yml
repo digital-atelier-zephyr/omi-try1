@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: omi
+      POSTGRES_USER: omi
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    image: ghcr.io/digital-atelier-zephyr/omi-try1/api:latest
+    ports:
+      - "9090:9000"
+    depends_on:
+      - db
+    environment:
+      APP_KEY: base64:placeholder_will_be_set
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: omi
+      DB_USERNAME: omi
+      DB_PASSWORD: secret
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8081:8978"
+    volumes:
+      - cbdata:/opt/cloudbeaver/workspace
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+  cbdata:
