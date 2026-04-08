@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Зависимости для PostgreSQL и Laravel
 RUN apk add --no-cache \
