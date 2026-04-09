@@ -72,6 +72,7 @@ services:
       - WATCHTOWER_POLL_INTERVAL=60
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
+      - DOCKER_API_VERSION=1.40
     restart: unless-stopped
 
 volumes:
