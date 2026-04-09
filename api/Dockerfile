@@ -15,12 +15,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Сначала зависимости (кэшируется если composer.json не менялся)
+# Сначала зависимости (без scripts — artisan ещё нет)
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Потом код (~5MB вместо 250MB при pull)
+# Потом весь код
 COPY . .
+
+# Теперь запускаем post-install scripts (artisan уже на месте)
+RUN composer run-script post-autoload-dump
 
 # Entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/
