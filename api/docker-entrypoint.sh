@@ -33,7 +33,8 @@ echo "✅ Database connected"
 # Миграции
 php artisan migrate --force
 
-# Кэш
+# Кэш (сброс + пересборка)
+php artisan cache:clear
 php artisan config:cache
 
 echo "✅ Startup complete. Launching PHP-FPM..."
