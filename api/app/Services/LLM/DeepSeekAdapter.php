@@ -28,7 +28,7 @@ class DeepSeekAdapter implements LLMAdapter
         ];
 
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.deepseek.api_key'),
+            'Authorization' => 'Bearer '.config('services.deepseek.api_key'),
         ])->timeout(60)->post("{$this->baseUrl}/chat/completions", $payload);
 
         $response->throw();
@@ -39,7 +39,7 @@ class DeepSeekAdapter implements LLMAdapter
     public function embed(string $text): array
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.deepseek.api_key'),
+            'Authorization' => 'Bearer '.config('services.deepseek.api_key'),
         ])->post("{$this->baseUrl}/embeddings", [
             'model' => 'deepseek-chat',
             'input' => $text,
