@@ -25,6 +25,6 @@ class Session extends Model
 
     public function episodes(): HasMany
     {
-        return $this->hasMany(Episode::class);
+        return $this->hasMany(Episode::class, 'chat_session_id');
     }
 }
