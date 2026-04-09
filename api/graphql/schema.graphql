@@ -22,7 +22,7 @@ type Memory {
     createdAt: DateTime!
 }
 
-type ChatSession @model(class: "App\\\\Models\\\\Session") {
+type ChatSession @model(class: "App\\Models\\Session") {
     id: ID!
     title: String
     summary: String
