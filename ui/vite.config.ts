@@ -9,4 +9,9 @@ export default defineConfig({
       $lib: path.resolve("./src/lib"),
     },
   },
+  server: {
+    proxy: {
+      '/graphql': 'http://localhost:9080'
+    }
+  }
 })

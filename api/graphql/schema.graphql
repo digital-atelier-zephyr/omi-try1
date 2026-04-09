@@ -39,7 +39,7 @@ type Query {
     chatSessions(limit: Int @limit): [ChatSession!]! @all
 
     "Сообщения сессии"
-    episodes(chatSessionId: ID! @eq, limit: Int @limit): [Episode!]! @all
+    episodes(chatSessionId: ID! @eq(key: "chat_session_id"), limit: Int @limit): [Episode!]! @all
 
     "Все активные знания"
     memories(limit: Int @limit): [Memory!]! @all
