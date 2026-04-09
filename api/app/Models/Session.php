@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Session extends Model
 {
+    protected $table = 'chat_sessions';
     protected $fillable = [
         'title',
         'summary',

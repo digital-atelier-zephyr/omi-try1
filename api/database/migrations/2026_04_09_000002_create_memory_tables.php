@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('sessions', function (Blueprint $table) {
+        Schema::create('chat_sessions', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
             $table->text('summary')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
 
         Schema::create('episodes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('chat_session_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['user', 'assistant', 'system']);
             $table->text('content');
             $table->integer('tokens_used')->nullable();
@@ -55,6 +55,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('memories');
         Schema::dropIfExists('episodes');
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('chat_sessions');
     }
 };

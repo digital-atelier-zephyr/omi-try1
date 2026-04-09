@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Episode extends Model
 {
     protected $fillable = [
-        'session_id',
+        'chat_session_id',
         'role',
         'content',
         'embedding',
@@ -25,6 +25,6 @@ class Episode extends Model
 
     public function session(): BelongsTo
     {
-        return $this->belongsTo(Session::class);
+        return $this->belongsTo(Session::class, 'chat_session_id');
     }
 }
