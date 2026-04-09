@@ -15,11 +15,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Копируем всё
-COPY . .
-
-# Ставим зависимости
+# Сначала зависимости (кэшируется если composer.json не менялся)
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Потом код (~5MB вместо 250MB при pull)
+COPY . .
 
 # Entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/

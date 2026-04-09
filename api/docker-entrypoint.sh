@@ -35,7 +35,6 @@ php artisan migrate --force
 
 # Кэш
 php artisan config:cache
-php artisan route:cache
 
 echo "✅ Startup complete. Launching PHP-FPM..."
 exec php-fpm
