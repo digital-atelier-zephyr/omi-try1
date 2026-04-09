@@ -62,7 +62,7 @@ export const UPDATE_SESSION_PROMPT = `
 `;
 
 export const SEND_MESSAGE = `
-	mutation SendMessage($chatSessionId: ID!, $content: String!) {
+	mutation SendMessage($chatSessionId: ID, $content: String!) {
 		sendMessage(chatSessionId: $chatSessionId, content: $content) {
 			id
 			role
