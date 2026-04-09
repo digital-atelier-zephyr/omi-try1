@@ -59,7 +59,7 @@
 	}
 
 	async function sendMessage() {
-		if (!message.trim() || !activeSessionId) return;
+		if (!message.trim()) return;
 		
 		const content = message;
 		message = "";
@@ -72,6 +72,11 @@
 			const data = await graphql(SEND_MESSAGE, { chatSessionId: activeSessionId, content });
 			// Бэкенд возвращает ответ ИИ!
 			messages = [...messages, data.sendMessage];
+			
+			// Если не было сессии — бэкенд создал новую, обновим список
+			if (!activeSessionId) {
+				await loadSessions();
+			}
 		} catch (e) {
 			console.error("Ошибка отправки:", e);
 		} finally {

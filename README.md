@@ -1,63 +1,78 @@
 # OMI — AI Messenger
 
-Мобильный мессенджер с нейросетью. Expo + Laravel GraphQL + PostgreSQL + Ollama.
-
-## Инфраструктура
-
-| Компонент | Статус |
-|-----------|--------|
-| Laravel 13 + Postgres | ✅ |
-| CI/CD (lint → test → build → push → notify) | ✅ |
-| Docker registry (ghcr.io) | ✅ |
-| Production deploy (pull from registry) | ✅ |
-| Dozzle (логи в браузере) | ✅ |
-| CloudBeaver (БД в браузере) | ✅ |
-| Health checks | ✅ |
-| Auto-migration на старте | ✅ |
-| Telegram уведомления | ✅ |
-| GitHub организация + глобальные секреты | ✅ |
+Суверенный мессенджер с AI. Svelte + Laravel GraphQL + DeepSeek + PostgreSQL + pgvector.
 
 ## Быстрый старт
 
 ```bash
-# 1. Клонируем
+# 1. Клонируй
 git clone git@github.com:digital-atelier-zephyr/omi-try1.git
 cd omi-try1
 
-# 2. Настраиваем env
-cp .env.prod.example .env
+# 2. Настрой ключ
+cp .env.example .env
+# Открой .env и вставь свой DEEPSEEK_API_KEY
 
-# 3. Домен
-echo "127.0.0.1 omi.local" | sudo tee -a /etc/hosts
+# 3. Запусти
+docker compose up -d
 
-# 4. Логинимся в registry
-echo "TOKEN" | docker login ghcr.io -u USER --password-stdin
-
-# 5. Поднимаем
-docker compose -f docker-compose.prod.yml --env-file .env up -d
+# 4. Открой
+# http://localhost — чат с AI
 ```
+
+## Архитектура
+
+```
+┌─────────────┐    ┌───────────┐    ┌──────────────┐    ┌──────────┐
+│  UI (Svelte) │───▶│  Nginx    │───▶│  Laravel API  │───▶│ DeepSeek │
+│  port 80     │    │  port 9080│    │  PHP-FPM 9000 │    │  API     │
+└─────────────┘    └───────────┘    └──────┬───────┘    └──────────┘
+                                           │
+                                    ┌──────▼───────┐
+                                    │  PostgreSQL   │
+                                    │  + pgvector   │
+                                    └──────────────┘
+```
+
+## Стек
+
+| Слой | Технология |
+|------|-----------|
+| **UI** | Svelte 5 + TypeScript + TailwindCSS |
+| **API** | Laravel 13 + Lighthouse (GraphQL) |
+| **AI** | DeepSeek API (с памятью через pgvector) |
+| **DB** | PostgreSQL 16 + pgvector |
+| **CI/CD** | GitHub Actions → GHCR → Watchtower |
+| **Мониторинг** | Dozzle (логи), CloudBeaver (БД) |
 
 ## Сервисы
 
 | Сервис | URL |
 |--------|-----|
-| API | http://omi.local |
-| Dozzle (логи) | http://localhost:9999 |
-| CloudBeaver (БД) | http://localhost:8081 |
+| Чат | http://localhost |
+| GraphiQL | http://localhost:9080/graphiql |
+| Логи (Dozzle) | http://localhost:9999 |
+| БД (CloudBeaver) | http://localhost:8081 |
 
 ## CI/CD Pipeline
 
 ```
-git push → Lint (Pint) → Tests (PHPUnit + Postgres) → Docker Build & Push → Telegram Notify
+git push → Lint → Tests → Build API + UI → Push to GHCR → Telegram Notify
+                                                  ↓
+                                            Watchtower → Auto-deploy
 ```
 
-## Стек
+## Инфраструктура
 
-- **Mobile**: Expo Go (React Native)
-- **API**: Laravel 13 + Lighthouse (GraphQL)
-- **DB**: PostgreSQL 16
-- **LLM**: Ollama (local)
-- **CI/CD**: GitHub Actions
-- **Registry**: GitHub Container Registry (ghcr.io)
-- **Monitoring**: Dozzle
-- **DB Client**: CloudBeaver
+| Компонент | Статус |
+|-----------|--------|
+| Laravel 13 + PostgreSQL + pgvector | ✅ |
+| Svelte UI (докеризирован) | ✅ |
+| GraphQL API (Lighthouse) | ✅ |
+| AI с памятью (эпизодическая + семантическая) | ✅ |
+| CI/CD (lint → test → build → push → notify) | ✅ |
+| Docker registry (ghcr.io) | ✅ |
+| Auto-deploy (Watchtower) | ✅ |
+| Health checks | ✅ |
+| Auto-migration на старте | ✅ |
+| Telegram уведомления | ✅ |

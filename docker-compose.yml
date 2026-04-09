@@ -11,7 +11,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U omi"]
+      test: [ "CMD-SHELL", "pg_isready -U omi" ]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -58,7 +58,7 @@ services:
       context: ./ui
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "3493:80"
     depends_on:
       - nginx
 
