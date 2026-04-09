@@ -2,8 +2,6 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Session;
-
 class Consolidate
 {
     public function __invoke(mixed $root, array $args): array

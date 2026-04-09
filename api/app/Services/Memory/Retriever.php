@@ -4,7 +4,6 @@ namespace App\Services\Memory;
 
 use App\Models\Memory;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Retriever
 {
