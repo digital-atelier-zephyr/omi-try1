@@ -26,6 +26,7 @@ type ChatSession @model(class: "App\\Models\\Session") {
     id: ID!
     title: String
     summary: String
+    systemPrompt: String
     modelUsed: String
     episodesCount: Int!
     startedAt: DateTime!
@@ -52,6 +53,10 @@ type Mutation {
     "Отправить сообщение AI"
     sendMessage(content: String!, chatSessionId: ID, model: String): Episode!
         @field(resolver: "App\\GraphQL\\Mutations\\SendMessage")
+
+    "Обновить сессию"
+    updateChatSession(id: ID!, systemPrompt: String): ChatSession!
+        @update
 
     "Закрепить знание (не забудется)"
     pinMemory(id: ID!): Memory!

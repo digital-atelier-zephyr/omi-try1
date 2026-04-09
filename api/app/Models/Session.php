@@ -12,6 +12,7 @@ class Session extends Model
     protected $fillable = [
         'title',
         'summary',
+        'system_prompt',
         'model_used',
         'episodes_count',
         'started_at',
