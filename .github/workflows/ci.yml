@@ -109,11 +109,15 @@ jobs:
             type=sha
             type=raw,value=latest
 
+      - uses: docker/setup-buildx-action@v3
+
       - uses: docker/build-push-action@v5
         with:
           context: ./api
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   # 4. Telegram notify
   notify:
