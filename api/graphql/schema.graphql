@@ -1,0 +1,67 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Episode {
+    id: ID!
+    role: String!
+    content: String!
+    tokensUsed: Int
+    modelUsed: String
+    createdAt: DateTime!
+}
+
+type Memory {
+    id: ID!
+    title: String!
+    content: String!
+    relevance: Float!
+    pinned: Boolean!
+    faded: Boolean!
+    accessCount: Int!
+    lastAccessed: DateTime
+    createdAt: DateTime!
+}
+
+type ChatSession {
+    id: ID!
+    title: String
+    summary: String
+    modelUsed: String
+    episodesCount: Int!
+    startedAt: DateTime!
+    endedAt: DateTime
+    episodes: [Episode!]! @hasMany
+}
+
+type Query {
+    "Список сессий"
+    chatSessions(limit: Int @limit): [ChatSession!]! @all
+
+    "Сообщения сессии"
+    episodes(chatSessionId: ID! @eq, limit: Int @limit): [Episode!]! @all
+
+    "Все активные знания"
+    memories(limit: Int @limit): [Memory!]! @all
+
+    "Semantic recall — поиск по смыслу"
+    recall(query: String!, limit: Int = 5): [Memory!]!
+        @field(resolver: "App\\GraphQL\\Queries\\RecallQuery")
+}
+
+type Mutation {
+    "Отправить сообщение AI"
+    sendMessage(content: String!, chatSessionId: ID, model: String): Episode!
+        @field(resolver: "App\\GraphQL\\Mutations\\SendMessage")
+
+    "Закрепить знание (не забудется)"
+    pinMemory(id: ID!): Memory!
+        @field(resolver: "App\\GraphQL\\Mutations\\PinMemory")
+
+    "Удалить знание"
+    deleteMemory(id: ID!): Memory!
+        @field(resolver: "App\\GraphQL\\Mutations\\DeleteMemory")
+
+    "Ручная консолидация"
+    consolidate(chatSessionId: ID): [Memory!]!
+        @field(resolver: "App\\GraphQL\\Mutations\\Consolidate")
+}

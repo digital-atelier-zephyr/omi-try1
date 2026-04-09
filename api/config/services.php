@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'deepseek' => [
+        'api_key' => env('DEEPSEEK_API_KEY'),
+    ],
 
 ];
