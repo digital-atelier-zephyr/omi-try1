@@ -46,6 +46,15 @@ services:
       timeout: 5s
       retries: 3
 
+  ui:
+    image: ghcr.io/digital-atelier-zephyr/omi-try1/ui:latest
+    ports:
+      - "3493:80"
+    depends_on:
+      - nginx
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
     ports:
