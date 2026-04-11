@@ -5,7 +5,6 @@ namespace App\Services\Memory;
 use App\Models\Memory;
 use App\Services\LLM\EmbeddingService;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Retriever
 {
@@ -19,7 +18,7 @@ class Retriever
     {
         $embedding = $this->embedder->embed($query);
 
-        if (!empty($embedding)) {
+        if (! empty($embedding)) {
             // v2: vector cosine similarity ( 1 - cosine = distance, меньше = ближе )
             $vecSql = EmbeddingService::toSql($embedding);
 

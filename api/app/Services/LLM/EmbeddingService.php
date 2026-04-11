@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 class EmbeddingService
 {
     private string $baseUrl;
+
     private string $model;
 
     public function __construct()
@@ -46,6 +47,6 @@ class EmbeddingService
      */
     public static function toSql(array $embedding): string
     {
-        return '[' . implode(',', $embedding) . ']';
+        return '['.implode(',', $embedding).']';
     }
 }

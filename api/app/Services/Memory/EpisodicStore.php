@@ -27,7 +27,7 @@ class EpisodicStore
 
         // Генерируем эмбеддинг (non-blocking: ошибка не прерывает сохранение)
         $embedding = $this->embedder->embed($content);
-        if (!empty($embedding)) {
+        if (! empty($embedding)) {
             DB::statement(
                 'UPDATE episodes SET embedding = ? WHERE id = ?',
                 [EmbeddingService::toSql($embedding), $episode->id]
