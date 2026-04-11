@@ -5,6 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\Models\Episode;
 use App\Models\Session;
 use App\Services\LLM\DeepSeekAdapter;
+use App\Services\LLM\EmbeddingService;
 use App\Services\Memory\EpisodicStore;
 use App\Services\Memory\Retriever;
 
@@ -21,8 +22,9 @@ class SendMessage
             ? Session::findOrFail($sessionId)
             : Session::create(['started_at' => now(), 'model_used' => $model]);
 
-        $episodicStore = new EpisodicStore;
-        $retriever = new Retriever;
+        $embedder = new EmbeddingService;
+        $episodicStore = new EpisodicStore($embedder);
+        $retriever = new Retriever($embedder);
         $llm = new DeepSeekAdapter;
 
         // 1. Сохраняем сообщение пользователя

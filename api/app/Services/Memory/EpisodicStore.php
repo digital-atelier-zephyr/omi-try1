@@ -4,9 +4,13 @@ namespace App\Services\Memory;
 
 use App\Models\Episode;
 use App\Models\Session;
+use App\Services\LLM\EmbeddingService;
+use Illuminate\Support\Facades\DB;
 
 class EpisodicStore
 {
+    public function __construct(private EmbeddingService $embedder) {}
+
     /**
      * Записать сообщение в эпизодическую память
      */
@@ -20,6 +24,15 @@ class EpisodicStore
         ]);
 
         $session->increment('episodes_count');
+
+        // Генерируем эмбеддинг (non-blocking: ошибка не прерывает сохранение)
+        $embedding = $this->embedder->embed($content);
+        if (!empty($embedding)) {
+            DB::statement(
+                'UPDATE episodes SET embedding = ? WHERE id = ?',
+                [EmbeddingService::toSql($embedding), $episode->id]
+            );
+        }
 
         return $episode;
     }

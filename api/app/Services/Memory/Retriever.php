@@ -3,27 +3,44 @@
 namespace App\Services\Memory;
 
 use App\Models\Memory;
+use App\Services\LLM\EmbeddingService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Retriever
 {
+    public function __construct(private EmbeddingService $embedder) {}
+
     /**
-     * Получить релевантные знания (пока по текстовому поиску, позже — vector)
+     * Получить релевантные знания — vector similarity (cosine) через pgvector.
+     * Fallback на ILIKE если Ollama недоступен.
      */
     public function recall(string $query, int $limit = 5): Collection
     {
-        // v1: текстовый поиск по title и content
-        // v2: vector similarity search через pgvector
-        $memories = Memory::active()
-            ->where(function ($q) use ($query) {
-                $q->where('title', 'ILIKE', "%{$query}%")
-                    ->orWhere('content', 'ILIKE', "%{$query}%");
-            })
-            ->orderByDesc('relevance_score')
-            ->limit($limit)
-            ->get();
+        $embedding = $this->embedder->embed($query);
 
-        // Touch access
+        if (!empty($embedding)) {
+            // v2: vector cosine similarity ( 1 - cosine = distance, меньше = ближе )
+            $vecSql = EmbeddingService::toSql($embedding);
+
+            $memories = Memory::active()
+                ->selectRaw('*, (embedding <=> ?) as distance', [$vecSql])
+                ->whereNotNull('embedding')
+                ->orderBy('distance')
+                ->limit($limit)
+                ->get();
+        } else {
+            // v1 fallback: текстовый поиск
+            $memories = Memory::active()
+                ->where(function ($q) use ($query) {
+                    $q->where('title', 'ILIKE', "%{$query}%")
+                        ->orWhere('content', 'ILIKE', "%{$query}%");
+                })
+                ->orderByDesc('relevance_score')
+                ->limit($limit)
+                ->get();
+        }
+
         $memories->each(fn (Memory $m) => $m->touch_access());
 
         return $memories;
