@@ -1,3 +1,5 @@
+name: omi-prod
+
 services:
   db:
     image: pgvector/pgvector:pg16
