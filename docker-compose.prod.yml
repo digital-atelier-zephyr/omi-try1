@@ -79,11 +79,12 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/zephyr/.docker/config.json:/config.json:ro
     environment:
       - WATCHTOWER_POLL_INTERVAL=60
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
+      - REPO_USER=${GH_USERNAME:-digital-atelier-zephyr}
+      - REPO_PASS=${GH_TOKEN}
       - DOCKER_API_VERSION=1.40
     restart: unless-stopped
 
