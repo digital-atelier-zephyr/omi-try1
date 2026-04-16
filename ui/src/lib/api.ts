@@ -87,7 +87,7 @@ export async function streamMessage(
 		});
 
 		if (!response.ok) {
-			throw new Error(`\n\nHTTP \${response.status}: \${await response.text()}`);
+			throw new Error(`HTTP ${response.status}: ${await response.text()}`);
 		}
 
 		if (!response.body) throw new Error("No readable stream in response");
