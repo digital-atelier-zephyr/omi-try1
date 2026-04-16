@@ -26,7 +26,7 @@ class SendMessage
         $embedder = new EmbeddingService;
         $episodicStore = new EpisodicStore($embedder);
         $retriever = new Retriever($embedder);
-        $llm = match($model) {
+        $llm = match ($model) {
             'openai' => new OpenAIAdapter,
             default => new DeepSeekAdapter,
         };
