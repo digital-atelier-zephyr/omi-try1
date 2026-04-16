@@ -38,6 +38,10 @@ return [
         'api_key' => env('DEEPSEEK_API_KEY'),
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
+
     'ollama' => [
         'url' => env('OLLAMA_URL', 'http://host.docker.internal:11434'),
         'embed_model' => env('OLLAMA_EMBED_MODEL', 'nomic-embed-text-v2-moe'),

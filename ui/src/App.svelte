@@ -10,6 +10,7 @@
 	let systemPrompt = "";
 	let message = "";
 	let isSidebarOpen = false;
+	let selectedModel = 'deepseek';
 	
 	let sessions: any[] = [];
 	let activeSessionId: string | null = null;
@@ -69,7 +70,7 @@
 		isTyping = true;
 		
 		try {
-			const data = await graphql(SEND_MESSAGE, { chatSessionId: activeSessionId, content });
+			const data = await graphql(SEND_MESSAGE, { chatSessionId: activeSessionId, content, model: selectedModel });
 			// Бэкенд возвращает ответ ИИ!
 			messages = [...messages, data.sendMessage];
 			
@@ -119,9 +120,16 @@
 			<button class="md:hidden mr-4 p-2 -ml-2 text-slate-600 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors" on:click={toggleSidebar}>
 				<Menu class="w-5 h-5" />
 			</button>
-			<h2 class="font-medium truncate">
+			<h2 class="font-medium truncate flex-1">
 				{sessions.find(s => s.id === activeSessionId)?.title || 'Чат с ИИ'}
 			</h2>
+			<select 
+				bind:value={selectedModel}
+				class="ml-4 text-xs px-2 py-1.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
+			>
+				<option value="deepseek">DeepSeek</option>
+				<option value="openai">GPT-4o mini</option>
+			</select>
 		</header>
 
 		<!-- Message List -->
