@@ -153,6 +153,8 @@ jobs:
           context: ./ui
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -26,5 +26,8 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "~6.0.2",
     "vite": "^8.0.4"
+  },
+  "dependencies": {
+    "@sentry/svelte": "^10.49.0"
   }
 }
