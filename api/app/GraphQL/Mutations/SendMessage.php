@@ -5,8 +5,8 @@ namespace App\GraphQL\Mutations;
 use App\Models\Episode;
 use App\Models\Session;
 use App\Services\LLM\DeepSeekAdapter;
-use App\Services\LLM\OpenAIAdapter;
 use App\Services\LLM\EmbeddingService;
+use App\Services\LLM\OpenAIAdapter;
 use App\Services\Memory\EpisodicStore;
 use App\Services\Memory\Retriever;
 
@@ -38,7 +38,7 @@ class SendMessage
         $memoryContext = $retriever->buildContext($content);
 
         // 3. Собираем system prompt
-        $systemPrompt = ($session->system_prompt ?: "Ты — AI ассистент с памятью. Отвечай кратко и по делу.") . "\n\n";
+        $systemPrompt = ($session->system_prompt ?: 'Ты — AI ассистент с памятью. Отвечай кратко и по делу.')."\n\n";
         if ($memoryContext) {
             $systemPrompt .= "Вот что ты помнишь:\n{$memoryContext}\n";
         }
