@@ -2,6 +2,9 @@
 
 namespace App\Services\LLM;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\Http;
 
 class OpenAIAdapter implements LLMAdapter
@@ -47,7 +50,7 @@ class OpenAIAdapter implements LLMAdapter
             'stream' => true,
         ];
 
-        $client = new \GuzzleHttp\Client(['timeout' => 120]);
+        $client = new Client(['timeout' => 120]);
 
         try {
             $response = $client->post("{$this->baseUrl}/chat/completions", [
@@ -59,17 +62,17 @@ class OpenAIAdapter implements LLMAdapter
                 'json' => $payload,
                 'stream' => true,
             ]);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $body = json_decode($e->getResponse()->getBody()->getContents(), true);
             $message = $body['error']['message'] ?? $e->getMessage();
-            throw new \Exception("OpenAI Error: " . $message);
+            throw new \Exception('OpenAI Error: '.$message);
         }
 
         $body = $response->getBody();
         $fullText = '';
 
-        while (!$body->eof()) {
-            $line = \GuzzleHttp\Psr7\Utils::readLine($body);
+        while (! $body->eof()) {
+            $line = Utils::readLine($body);
 
             if (str_starts_with($line, 'data: ')) {
                 $data = substr($line, 6);

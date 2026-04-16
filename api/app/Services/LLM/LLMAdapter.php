@@ -10,9 +10,10 @@ interface LLMAdapter
 
     /**
      * Потоковая генерация ответа (SSE).
-     * @param string $prompt Системный промпт
-     * @param array $messages История сообщений
-     * @param callable $onChunk Функция обратного вызова onChunk(string $text)
+     *
+     * @param  string  $prompt  Системный промпт
+     * @param  array  $messages  История сообщений
+     * @param  callable  $onChunk  Функция обратного вызова onChunk(string $text)
      * @return string Полный итоговый текст ответа
      */
     public function completeStream(string $prompt, array $messages, callable $onChunk): string;

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\Session;
 use App\Services\LLM\DeepSeekAdapter;
-use App\Services\LLM\OpenAIAdapter;
 use App\Services\LLM\EmbeddingService;
+use App\Services\LLM\OpenAIAdapter;
 use App\Services\Memory\EpisodicStore;
 use App\Services\Memory\Retriever;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ChatStreamController extends Controller
 {
@@ -44,7 +44,7 @@ class ChatStreamController extends Controller
                 $embedder = new EmbeddingService;
                 $episodicStore = new EpisodicStore($embedder);
                 $retriever = new Retriever($embedder);
-                
+
                 $llm = match ($modelName) {
                     'openai' => new OpenAIAdapter,
                     default => new DeepSeekAdapter,
@@ -59,22 +59,22 @@ class ChatStreamController extends Controller
                     ->take(10)
                     ->get()
                     ->reverse()
-                    ->map(fn($ep) => [
+                    ->map(fn ($ep) => [
                         'role' => $ep->role,
-                        'content' => $ep->content
+                        'content' => $ep->content,
                     ])->toArray();
 
                 // Ищем релевантный контекст (векторный поиск)
                 $contextEntries = $retriever->recall($content, 5);
-                $contextText = implode("\n", array_map(fn($c) => $c->content, $contextEntries));
+                $contextText = implode("\n", array_map(fn ($c) => $c->content, $contextEntries));
 
-                $systemPrompt = $session->system_prompt ?: "Ты полезный ИИ-ассистент.";
+                $systemPrompt = $session->system_prompt ?: 'Ты полезный ИИ-ассистент.';
                 if ($contextText !== '') {
-                    $systemPrompt .= "\nКонтекст прошлых бесед:\n" . $contextText;
+                    $systemPrompt .= "\nКонтекст прошлых бесед:\n".$contextText;
                 }
 
                 // Вызываем LLM в потоке
-                $assistantContent = $llm->completeStream($systemPrompt, $history, function($chunk) {
+                $assistantContent = $llm->completeStream($systemPrompt, $history, function ($chunk) {
                     // Отправляем SSE-chunk
                     $this->sendSSE('chunk', ['content' => $chunk]);
                 });
@@ -85,7 +85,7 @@ class ChatStreamController extends Controller
                 $titleGenerated = false;
 
                 // Авто-заголовок (если это первый обмен сообщениями)
-                if (!$chatSessionId && $session->episodes()->count() === 2) {
+                if (! $chatSessionId && $session->episodes()->count() === 2) {
                     try {
                         $titlePrompt = "Сгенерируй короткий заголовок (3-5 слов) для этого чата:\nUser: {$content}\nAssistant: {$assistantContent}\nВыведи только заголовок, без кавычек.";
                         $newTitle = $llm->complete($titlePrompt);
@@ -118,7 +118,7 @@ class ChatStreamController extends Controller
     private function sendSSE(string $event, array $data)
     {
         echo "event: {$event}\n";
-        echo "data: " . json_encode($data, JSON_UNESCAPED_UNICODE) . "\n\n";
+        echo 'data: '.json_encode($data, JSON_UNESCAPED_UNICODE)."\n\n";
         flush();
     }
 }
