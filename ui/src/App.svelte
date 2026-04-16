@@ -4,7 +4,7 @@
 	import Sidebar from "$lib/components/Sidebar.svelte";
 	import MessageBubble from "$lib/components/MessageBubble.svelte";
 	import InputSocket from "$lib/components/InputSocket.svelte";
-	import { graphql, GET_SESSIONS, GET_EPISODES, SEND_MESSAGE, UPDATE_SESSION_PROMPT } from "$lib/api";
+	import { graphql, GET_SESSIONS, GET_EPISODES, UPDATE_SESSION_PROMPT, streamMessage } from "$lib/api";
 
 	// Состояние приложения
 	let systemPrompt = "";
@@ -60,29 +60,46 @@
 	}
 
 	async function sendMessage() {
-		if (!message.trim()) return;
+		if (!message.trim() || isTyping) return;
 		
 		const content = message;
 		message = "";
 		
 		// Локальное оптимистичное обновление
 		messages = [...messages, { role: "user", content }];
+		
+		// Пустой ответ ассистента для старта стрима
+		messages = [...messages, { role: "assistant", content: "", isStreaming: true }];
 		isTyping = true;
 		
-		try {
-			const data = await graphql(SEND_MESSAGE, { chatSessionId: activeSessionId, content, model: selectedModel });
-			// Бэкенд возвращает ответ ИИ!
-			messages = [...messages, data.sendMessage];
-			
-			// Если не было сессии — бэкенд создал новую, обновим список
-			if (!activeSessionId) {
-				await loadSessions();
+		await streamMessage(
+			content,
+			activeSessionId,
+			selectedModel,
+			(chunk) => {
+				messages[messages.length - 1].content += chunk;
+				isTyping = false; // Убираем пульсирующий скелетон при первом же символе
+			},
+			async (data) => {
+				messages[messages.length - 1].isStreaming = false;
+				messages[messages.length - 1].id = data.episodeId;
+				isTyping = false;
+				
+				if (!activeSessionId) {
+					activeSessionId = data.sessionId;
+					await loadSessions();
+				} else if (data.title) {
+					const session = sessions.find(s => s.id === activeSessionId);
+					if (session) session.title = data.title;
+					sessions = [...sessions];
+				}
+			},
+			(err) => {
+				messages[messages.length - 1].content += `\n\n**[Системная Ошибка]:** ${err}`;
+				messages[messages.length - 1].isStreaming = false;
+				isTyping = false;
 			}
-		} catch (e) {
-			console.error("Ошибка отправки:", e);
-		} finally {
-			isTyping = false;
-		}
+		);
 	}
 	
 	function toggleSidebar() {
