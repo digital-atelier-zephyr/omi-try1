@@ -34,10 +34,10 @@ class LiveKitTokenController extends Controller
                 'canPublish' => true,
                 'canSubscribe' => true,
                 'canPublishData' => true,
-                'roomConfig' => [
-                    'agents' => [
-                        ['agentName' => 'omi-agent'],
-                    ],
+            ],
+            'roomConfig' => [
+                'agents' => [
+                    ['agentName' => 'omi-agent'],
                 ],
             ],
             'metadata' => json_encode(['name' => 'OMI User']),
