@@ -28,6 +28,7 @@
     "vite": "^8.0.4"
   },
   "dependencies": {
-    "@sentry/svelte": "^10.49.0"
+    "@sentry/svelte": "^10.49.0",
+    "livekit-client": "^2.18.3"
   }
 }

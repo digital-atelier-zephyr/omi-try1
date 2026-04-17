@@ -47,4 +47,10 @@ return [
         'embed_model' => env('OLLAMA_EMBED_MODEL', 'nomic-embed-text-v2-moe'),
     ],
 
+    'livekit' => [
+        'url' => env('LIVEKIT_URL'),
+        'api_key' => env('LIVEKIT_API_KEY'),
+        'api_secret' => env('LIVEKIT_API_SECRET'),
+    ],
+
 ];

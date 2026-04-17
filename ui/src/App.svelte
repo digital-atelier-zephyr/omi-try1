@@ -4,6 +4,7 @@
 	import Sidebar from "$lib/components/Sidebar.svelte";
 	import MessageBubble from "$lib/components/MessageBubble.svelte";
 	import InputSocket from "$lib/components/InputSocket.svelte";
+	import VoiceCall from "$lib/components/VoiceCall.svelte";
 	import {
 		graphql,
 		GET_SESSIONS,
@@ -170,6 +171,7 @@
 				<option value="deepseek">DeepSeek</option>
 				<option value="openai">GPT-4o mini</option>
 			</select>
+			<VoiceCall />
 		</header>
 
 		<!-- Message List -->
