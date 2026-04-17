@@ -7,7 +7,13 @@
 	let room: any = null;
 	let statusText = "";
 	let debugLogs: string[] = [];
-	let showDebug = true; // Учебный проект — дебаг всегда видим
+	let showDebug = true;
+
+	// Portal action — телепортирует элемент в body, обходя backdrop-blur containing block
+	function portal(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy() { node.remove(); } };
+	}
 	let participants: string[] = [];
 	let micLevel = 0;
 	let micAnalyser: any = null;
@@ -241,7 +247,7 @@
 </div>
 
 {#if showDebug}
-	<div class="fixed bottom-0 right-0 w-[420px] max-h-[300px] bg-zinc-950/95 border border-zinc-700 rounded-tl-xl z-50 flex flex-col text-xs font-mono">
+	<div use:portal class="fixed bottom-0 right-0 w-[420px] max-h-[300px] bg-zinc-950/95 border border-zinc-700 rounded-tl-xl z-50 flex flex-col text-xs font-mono">
 		<div class="flex items-center justify-between px-3 py-1.5 border-b border-zinc-800">
 			<span class="text-green-400 font-bold">🐛 LiveKit Debug</span>
 			<div class="flex gap-2">
