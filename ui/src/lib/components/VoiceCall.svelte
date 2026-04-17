@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Phone, PhoneOff } from "lucide-svelte";
+	import * as Sentry from "@sentry/svelte";
 
 	let isConnected = false;
 	let isConnecting = false;
@@ -61,6 +62,7 @@
 			await room.localParticipant.setMicrophoneEnabled(true);
 		} catch (err: any) {
 			console.error("LiveKit connect error:", err);
+			Sentry.captureException(err);
 			statusText = err.message || "Ошибка подключения";
 			isConnecting = false;
 			setTimeout(() => {
