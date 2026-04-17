@@ -24,7 +24,7 @@ class ChatStreamTest extends TestCase
         ]);
 
         // Роут существует и не 404/419
-        $this->assertNotEquals(404, $response->status());
-        $this->assertNotEquals(419, $response->status());
+        $this->assertNotEquals(404, $response->getStatusCode());
+        $this->assertNotEquals(419, $response->getStatusCode());
     }
 }
