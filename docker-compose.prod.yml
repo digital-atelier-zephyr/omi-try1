@@ -57,6 +57,14 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  # LiveKit голосовой агент
+  agent:
+    image: ghcr.io/digital-atelier-zephyr/omi-try1/agent:latest
+    env_file: .env.prod
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
     ports:
