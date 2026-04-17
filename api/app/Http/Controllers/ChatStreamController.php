@@ -66,7 +66,7 @@ class ChatStreamController extends Controller
 
                 // Ищем релевантный контекст (векторный поиск)
                 $contextEntries = $retriever->recall($content, 5);
-                $contextText = implode("\n", array_map(fn ($c) => $c->content, $contextEntries));
+                $contextText = $contextEntries->pluck('content')->implode("\n");
 
                 $systemPrompt = $session->system_prompt ?: 'Ты полезный ИИ-ассистент.';
                 if ($contextText !== '') {
@@ -103,7 +103,7 @@ class ChatStreamController extends Controller
                     'title' => $titleGenerated ? $session->title : null,
                 ]);
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Если сломалось - красиво отправляем ошибку на фронт
                 $this->sendSSE('error', ['message' => $e->getMessage()]);
             }
