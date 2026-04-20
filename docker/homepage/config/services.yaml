@@ -32,6 +32,13 @@
         server: my-docker
         container: omi-prod-prometheus-1
 
+    - Uptime Kuma:
+        icon: uptime-kuma
+        href: http://status.omi.local
+        description: Service Status & Alerts
+        server: my-docker
+        container: omi-prod-uptime-kuma-1
+
 - Infrastructure:
     - Database (PG):
         icon: postgresql

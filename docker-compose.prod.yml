@@ -170,6 +170,21 @@ services:
       - DOCKER_API_VERSION=1.40
     restart: unless-stopped
 
+  # Мониторинг аптайма (Uptime Kuma)
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    networks:
+      - default
+      - traefik
+    volumes:
+      - uptime_kuma_data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-uptime.rule=Host(`status.omi.local`)"
+      - "traefik.http.services.omi-uptime.loadbalancer.server.port=3001"
+    restart: unless-stopped
+
   # Дашборд-витрина (Homepage)
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -197,3 +212,4 @@ volumes:
   api_storage:
   prometheus_data:
   grafana_data:
+  uptime_kuma_data:
