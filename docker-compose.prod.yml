@@ -36,8 +36,9 @@ services:
 
   nginx:
     image: nginx:alpine
-    ports:
-      - "9080:80"
+    networks:
+      - default
+      - traefik
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
@@ -47,15 +48,25 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-api.rule=Host(`api.omi.local`)"
+      - "traefik.http.services.omi-api.loadbalancer.server.port=80"
 
   ui:
     image: ghcr.io/digital-atelier-zephyr/omi-try1/ui:latest
-    ports:
-      - "3493:80"
+    networks:
+      - default
+      - traefik
     depends_on:
       - nginx
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-ui.rule=Host(`omi.local`)"
+      - "traefik.http.services.omi-ui.loadbalancer.server.port=80"
 
   # LiveKit голосовой агент
   agent:
@@ -67,26 +78,36 @@ services:
 
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
-    ports:
-      - "8081:8978"
+    networks:
+      - default
+      - traefik
     volumes:
       - cbdata:/opt/cloudbeaver/workspace
     depends_on:
       - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-cb.rule=Host(`db.omi.local`)"
+      - "traefik.http.services.omi-cb.loadbalancer.server.port=8978"
 
   # Веб-интерфейс для логов
   dozzle:
     image: amir20/dozzle:latest
-    ports:
-      - "9999:8080"
+    networks:
+      - default
+      - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-dozzle.rule=Host(`dozzle.omi.local`)"
+      - "traefik.http.services.omi-dozzle.loadbalancer.server.port=8080"
 
   # Observability Stack: Prometheus, Loki, Grafana, Promtail
   loki:
     image: grafana/loki:3.0.0
-    ports:
-      - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     restart: unless-stopped
 
@@ -103,17 +124,24 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
+    networks:
+      - default
+      - traefik
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-prometheus.rule=Host(`prometheus.omi.local`)"
+      - "traefik.http.services.omi-prometheus.loadbalancer.server.port=9090"
 
   grafana:
     image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+    networks:
+      - default
+      - traefik
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
@@ -123,6 +151,11 @@ services:
       - loki
       - prometheus
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-grafana.rule=Host(`grafana.omi.local`)"
+      - "traefik.http.services.omi-grafana.loadbalancer.server.port=3000"
 
   # Автодеплой: мониторит registry, сам обновляет api
   watchtower:
@@ -136,6 +169,27 @@ services:
       - WATCHTOWER_LABEL_ENABLE=true
       - DOCKER_API_VERSION=1.40
     restart: unless-stopped
+
+  # Дашборд-витрина (Homepage)
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    networks:
+      - default
+      - traefik
+    volumes:
+      - ./docker/homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infrastructure_default"
+      - "traefik.http.routers.omi-homepage.rule=Host(`home.omi.local`)"
+      - "traefik.http.services.omi-homepage.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+networks:
+  traefik:
+    name: infrastructure_default
+    external: true
 
 volumes:
   pgdata:

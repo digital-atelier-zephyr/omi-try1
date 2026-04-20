@@ -1,0 +1,46 @@
+- Core:
+    - OMI Interface:
+        icon: svelte
+        href: http://omi.local
+        description: AI Messenger Interface
+        server: my-docker
+        container: omi-prod-ui-1
+    - API Nginx:
+        icon: nginx
+        href: http://api.omi.local/health
+        description: Backend Gateway
+        server: my-docker
+        container: omi-prod-nginx-1
+
+- Observability:
+    - Grafana:
+        icon: grafana
+        href: http://grafana.omi.local
+        description: Metrics & Logs
+        server: my-docker
+        container: omi-prod-grafana-1
+    - Dozzle:
+        icon: terminal
+        href: http://dozzle.omi.local
+        description: Real-time container logs
+        server: my-docker
+        container: omi-prod-dozzle-1
+    - Prometheus:
+        icon: prometheus
+        href: http://prometheus.omi.local
+        description: Metrics Storage
+        server: my-docker
+        container: omi-prod-prometheus-1
+
+- Infrastructure:
+    - Database (PG):
+        icon: postgresql
+        description: Vector DB Layer
+        server: my-docker
+        container: omi-prod-db-1
+    - CloudBeaver:
+        icon: dbeaver
+        href: http://db.omi.local
+        description: DB GUI Manager
+        server: my-docker
+        container: omi-prod-cloudbeaver-1
